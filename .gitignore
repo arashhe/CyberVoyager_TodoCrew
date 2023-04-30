@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+Agent
+my_ssh_key
+my_ssh_key.pub

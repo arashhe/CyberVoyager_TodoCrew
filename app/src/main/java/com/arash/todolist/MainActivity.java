@@ -16,6 +16,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,11 +30,12 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity  implements OnToDoClickListener , View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements OnToDoClickListener, View.OnClickListener {
     private TaskViewModel taskViewModel;
 
     private RecyclerView recyclerView;
@@ -45,14 +47,14 @@ public class MainActivity extends AppCompatActivity  implements OnToDoClickListe
 
     private RelativeLayout relativeLayout;
 
-    private ImageButton allTasksButton , todayTasksButton , tomorrowTasksButton , doneTasksButton;
+    private ImageButton allTasksButton, todayTasksButton, tomorrowTasksButton, doneTasksButton;
 //
 //    private Date date;
 //    private  long longDate;
 //    private String stringLongDate;
 
-    private Calendar calendarToConcvert ;
-    private Date todayAmDate,tomorrowAmDate,theDayAfterTomorrowAmDate;
+    private Calendar calendarToConcvert;
+    private Date todayAmDate, tomorrowAmDate, theDayAfterTomorrowAmDate;
 
     //private String searchSTR;
 
@@ -192,50 +194,72 @@ public class MainActivity extends AppCompatActivity  implements OnToDoClickListe
         sharedViewModel.setIsNew(true);
     }
 
+    LiveData<List<Task>> getAllTasks = null;
+    LiveData<List<Task>> today = null;
+    LiveData<List<Task>> tomorrow = null;
+    LiveData<List<Task>> doneTask = null;
+
+    Observer<List<Task>> dataChangeObserver = new DataChangeObserver();
+
+    void removeAll() {
+        if (getAllTasks != null) {
+            getAllTasks.removeObservers(this);
+        }
+        if (today != null) {
+            today.removeObservers(this);
+        }
+        if (tomorrow != null) {
+            tomorrow.removeObservers(this);
+        }
+        if (doneTask != null) {
+            doneTask.removeObservers(this);
+        }
+    }
+
     @Override
     public void onClick(View view) {
 
         int id = view.getId();
-        if (id == R.id.all_tasks){
-            Log.i("TAG", "onAllTasks: ");
-            taskViewModel.getAllTasks().observe(this, new Observer<List<Task>>() {
-                @Override
-                public void onChanged(List<Task> tasks) {
-                    recyclerViewAdapter = new RecyclerViewAdapter(tasks, MainActivity.this);
-                    recyclerView.setAdapter(recyclerViewAdapter);
-                    //Log.i("TAG", "IN ALL");
-                }
-            });
-        }else if (id == R.id.today_tasks){
-            taskViewModel.getSpecificData(String.valueOf(Converter.dateToTimestamp(todayAmDate)),String.valueOf(Converter.dateToTimestamp(tomorrowAmDate))).observe(this, new Observer<List<Task>>() {
-                @Override
-                public void onChanged(List<Task> tasks) {
-                    recyclerViewAdapter = new RecyclerViewAdapter(tasks, MainActivity.this);
-                    recyclerView.setAdapter(recyclerViewAdapter);
-                    //Log.i("TAG", "TODAY: " + String.valueOf(Converter.dateToTimestamp(todayAmDate))+" TOMORROW: "+String.valueOf(Converter.dateToTimestamp(tomorrowAmDate)));
-                }
-            });
+        removeAll();
+        if (id == R.id.all_tasks) {
+            getAllTasks = taskViewModel.getAllTasks();
+            getAllTasks.observe(this, dataChangeObserver);
+        } else if (id == R.id.today_tasks) {
+            today = taskViewModel.getSpecificData(String.valueOf(Converter.dateToTimestamp(todayAmDate)), String.valueOf(Converter.dateToTimestamp(tomorrowAmDate)));
+            today.observe(this, dataChangeObserver);
+        } else if (id == R.id.tomorrow_tasks) {
+            tomorrow = taskViewModel.getSpecificData(String.valueOf(Converter.dateToTimestamp(tomorrowAmDate)), String.valueOf(Converter.dateToTimestamp(theDayAfterTomorrowAmDate)));
+            tomorrow.observe(this, dataChangeObserver);
+        } else if (id == R.id.done_tasks) {
+            doneTask = taskViewModel.getDoneTasks("1");
+            doneTask.observe(this, dataChangeObserver);
+        }
+    }
 
-        }else if (id == R.id.tomorrow_tasks){
-            taskViewModel.getSpecificData(String.valueOf(Converter.dateToTimestamp(tomorrowAmDate)),String.valueOf(Converter.dateToTimestamp(theDayAfterTomorrowAmDate))).observe(this, new Observer<List<Task>>() {
-                @Override
-                public void onChanged(List<Task> tasks) {
-                    recyclerViewAdapter = new RecyclerViewAdapter(tasks, MainActivity.this);
-                    recyclerView.setAdapter(recyclerViewAdapter);
-                    //Log.i("TAG", "TODAY: " + String.valueOf(Converter.dateToTimestamp(todayAmDate))+" TOMORROW: "+String.valueOf(Converter.dateToTimestamp(tomorrowAmDate)));
-                }
-            });
+    class DataChangeObserver implements Observer<List<Task>> {
 
-        }else if (id == R.id.done_tasks){
-            Log.i("TAG", "onDoneTasks: ");
-            taskViewModel.getDoneTasks("1").observe(this, new Observer<List<Task>>() {
-                @Override
-                public void onChanged(List<Task> tasks) {
-                    recyclerViewAdapter = new RecyclerViewAdapter(tasks, MainActivity.this);
-                recyclerView.setAdapter(recyclerViewAdapter);
-                    //Log.i("TAG", "IN DONE");
-                }
-            });
+        @Override
+        public void onChanged(List<Task> tasks) {
+            recyclerViewAdapter = new RecyclerViewAdapter(tasks, MainActivity.this);
+            recyclerView.setAdapter(recyclerViewAdapter);
         }
     }
 }
+
+
+//interface MyObserver<T> {
+//    void onChanged(T t);
+//}
+//
+//class MyLiveData<T> {
+//    List<MyObserver<T>> observers = new ArrayList<>();
+//
+//    void observe(MyObserver<T> observer){
+//        observers.add(observer);
+//    }
+//    void add(T t){
+//        for(MyObserver<T> obs : observers){
+//            obs.onChanged(t);
+//        }
+//    }
+//}
