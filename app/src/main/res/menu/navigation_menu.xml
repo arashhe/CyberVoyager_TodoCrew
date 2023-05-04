@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText">
+
+    <item
+        android:id="@+id/menu_all_tasks"
+        android:title="All Tasks"
+        android:icon="@drawable/ic_baseline_all_inbox_24"/>
+
+    <item
+        android:id="@+id/menu_today_tasks"
+        android:title="Today Tasks"
+        android:icon="@drawable/ic_baseline_today_24"
+        />
+
+    <item
+        android:id="@+id/menu_tomorrow_tasks"
+        android:title="Tomorrow Tasks"
+        android:icon="@drawable/ic_baseline_wb_sunny_24"/>
+
+    <item
+        android:id="@+id/menu_done_tasks"
+        android:title="Done Tasks"
+        android:icon="@drawable/ic_baseline_done_all_24"/>
+
+</menu>

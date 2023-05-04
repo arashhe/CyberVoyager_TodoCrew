@@ -12,6 +12,7 @@ import com.arash.todolist.model.TaskViewModel;
 import com.arash.todolist.util.Converter;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -35,7 +36,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnToDoClickListener, View.OnClickListener {
+
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import android.os.Bundle;
+import android.view.MenuItem;
+
+public class MainActivity extends AppCompatActivity implements OnToDoClickListener, View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
     private TaskViewModel taskViewModel;
 
     private RecyclerView recyclerView;
@@ -58,12 +68,45 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
 
     //private String searchSTR;
 
+    public DrawerLayout drawerLayout;
+    public ActionBarDrawerToggle actionBarDrawerToggle;
+
+    private NavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        // drawer layout instance to toggle the menu icon to open
+        // drawer and back button to close drawer
+        drawerLayout = findViewById(R.id.my_drawer_layout);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);
+
+        // pass the Open and Close toggle for the drawer layout listener
+        // to toggle the button
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+
+        // to make the Navigation drawer icon always appear on the action bar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        navigationView = findViewById(R.id.my_navigation_menu);
+        navigationView.setNavigationItemSelectedListener(this);
+
+//        new NavigationView.OnNavigationItemSelectedListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//                int id = item.getItemId();
+//                if (id == R.id.menu_done_tasks){
+//                    onClick(doneTasksButton);
+//                }
+//                return false;
+//            }
+//        }
 
         bottomSheetFragment = new BottomSheetFragment();
         ConstraintLayout constraintLayout = findViewById(R.id.bottomSheet);
@@ -144,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
     }
 
 
+
     private void showBottomSheetDialog() {
         bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
     }
@@ -161,6 +205,25 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+//        int id2 = item.;
+        Log.d("TEST", "onOptionsItemSelected: before1");
+
+        if (id == R.id.done_tasks) {
+            Log.d("TEST", "onOptionsItemSelected: after");
+            onClick(doneTasksButton);
+            startActivity(new Intent(this, AboutActivity.class));
+
+//            return true;
+        }
+
+        Log.d("TEST", "onOptionsItemSelected: before2");
+
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        Log.d("TEST", "onOptionsItemSelected: before3");
+
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -217,6 +280,12 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
     }
 
     @Override
+    public void onBackPressed() {
+        drawerLayout.closeDrawers();
+        super.onBackPressed();
+    }
+
+    @Override
     public void onClick(View view) {
 
         int id = view.getId();
@@ -234,6 +303,29 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
             doneTask = taskViewModel.getDoneTasks("1");
             doneTask.observe(this, dataChangeObserver);
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+        removeAll();
+        if (id == R.id.menu_all_tasks) {
+            getAllTasks = taskViewModel.getAllTasks();
+            getAllTasks.observe(this, dataChangeObserver);
+        } else if (id == R.id.menu_today_tasks) {
+            today = taskViewModel.getSpecificData(String.valueOf(Converter.dateToTimestamp(todayAmDate)), String.valueOf(Converter.dateToTimestamp(tomorrowAmDate)));
+            today.observe(this, dataChangeObserver);
+        } else if (id == R.id.menu_tomorrow_tasks) {
+            tomorrow = taskViewModel.getSpecificData(String.valueOf(Converter.dateToTimestamp(tomorrowAmDate)), String.valueOf(Converter.dateToTimestamp(theDayAfterTomorrowAmDate)));
+            tomorrow.observe(this, dataChangeObserver);
+        } else if (id == R.id.menu_done_tasks) {
+            doneTask = taskViewModel.getDoneTasks("1");
+            doneTask.observe(this, dataChangeObserver);
+        }
+
+        drawerLayout.closeDrawers();
+        return false;
     }
 
     class DataChangeObserver implements Observer<List<Task>> {

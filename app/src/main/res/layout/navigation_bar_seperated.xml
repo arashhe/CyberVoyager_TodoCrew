@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        style="@style/Theme.Todolist.PopupOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <!--        android:theme="@style/Theme.TheDoist.AppBarOverlay"-->
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/Theme.Todolist.PopupOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary" />
+        <!--        app:popupTheme="@style/Theme.TheDoist.PopupOverlay"-->
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_35sdp"
+        app:srcCompat="@android:drawable/ic_input_add"
+        tools:ignore="ContentDescription" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/dimen_60"
+        android:padding="@dimen/recycler_padding"
+        android:visibility="visible">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+
+    <include layout="@layout/bottom_sheet"/>
+
+    <LinearLayout
+        android:id="@+id/classification_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom">
+
+        <ImageButton
+            android:id="@+id/all_tasks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_baseline_all_inbox_24" />
+
+        <ImageButton
+            android:id="@+id/today_tasks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_baseline_today_24" />
+
+        <ImageButton
+            android:id="@+id/tomorrow_tasks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_baseline_wb_sunny_24" />
+
+        <ImageButton
+            android:id="@+id/done_tasks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_baseline_done_all_24" />
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
