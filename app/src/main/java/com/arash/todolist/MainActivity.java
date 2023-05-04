@@ -57,12 +57,6 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
 
     private RelativeLayout relativeLayout;
 
-    private ImageButton allTasksButton, todayTasksButton, tomorrowTasksButton, doneTasksButton;
-//
-//    private Date date;
-//    private  long longDate;
-//    private String stringLongDate;
-
     private Calendar calendarToConcvert;
     private Date todayAmDate, tomorrowAmDate, theDayAfterTomorrowAmDate;
 
@@ -97,17 +91,6 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
         navigationView = findViewById(R.id.my_navigation_menu);
         navigationView.setNavigationItemSelectedListener(this);
 
-//        new NavigationView.OnNavigationItemSelectedListener() {
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                int id = item.getItemId();
-//                if (id == R.id.menu_done_tasks){
-//                    onClick(doneTasksButton);
-//                }
-//                return false;
-//            }
-//        }
-
         bottomSheetFragment = new BottomSheetFragment();
         ConstraintLayout constraintLayout = findViewById(R.id.bottomSheet);
         BottomSheetBehavior<ConstraintLayout> bottomSheetBehavior = BottomSheetBehavior.from(constraintLayout);
@@ -117,17 +100,6 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
-        allTasksButton = findViewById(R.id.all_tasks);
-        todayTasksButton = findViewById(R.id.today_tasks);
-        tomorrowTasksButton = findViewById(R.id.tomorrow_tasks);
-        doneTasksButton = findViewById(R.id.done_tasks);
-
-        allTasksButton.setOnClickListener(this);
-        todayTasksButton.setOnClickListener(this);
-        tomorrowTasksButton.setOnClickListener(this);
-        doneTasksButton.setOnClickListener(this);
-
         taskViewModel = new ViewModelProvider.AndroidViewModelFactory(
                 MainActivity.this.getApplication())
                 .create(TaskViewModel.class);
@@ -135,15 +107,8 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
 
 
-        onClick(allTasksButton);
-        Log.i("TAG", "onCreate: ");
-
-        //date = Calendar.getInstance().getTime();
-        //longDate = Converter.dateToTimestamp(date);
-        //stringLongDate = String.valueOf(longDate);
-        //stringLongDate = "16778989%";
-        //Log.i("TAGA", "onResume: RESUME "+ stringLongDate);
-
+        getAllTasks = taskViewModel.getAllTasks();
+        getAllTasks.observe(this, dataChangeObserver);
 
         calendarToConcvert = Calendar.getInstance();
         calendarToConcvert.set(Calendar.HOUR_OF_DAY, 0);
@@ -174,13 +139,8 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Task task = new Task("Todo", Priority.HIGH, Calendar.getInstance().getTime(),
-//                        Calendar.getInstance().getTime(),false,0);
-//
-//                TaskViewModel.insert(task);
 
                 sharedViewModel.setIsNew(true);
-                //Log.i("TAG", "onResume: RESUME "+ sharedViewModel.getIsNew());
                 showBottomSheetDialog();
             }
         });
@@ -194,38 +154,18 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-//        int id2 = item.;
-        Log.d("TEST", "onOptionsItemSelected: before1");
-
-        if (id == R.id.done_tasks) {
-            Log.d("TEST", "onOptionsItemSelected: after");
-            onClick(doneTasksButton);
-            startActivity(new Intent(this, AboutActivity.class));
-
-//            return true;
-        }
-
-        Log.d("TEST", "onOptionsItemSelected: before2");
 
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
-        Log.d("TEST", "onOptionsItemSelected: before3");
-
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, AboutActivity.class));
 
@@ -287,22 +227,6 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
 
     @Override
     public void onClick(View view) {
-
-        int id = view.getId();
-        removeAll();
-        if (id == R.id.all_tasks) {
-            getAllTasks = taskViewModel.getAllTasks();
-            getAllTasks.observe(this, dataChangeObserver);
-        } else if (id == R.id.today_tasks) {
-            today = taskViewModel.getSpecificData(String.valueOf(Converter.dateToTimestamp(todayAmDate)), String.valueOf(Converter.dateToTimestamp(tomorrowAmDate)));
-            today.observe(this, dataChangeObserver);
-        } else if (id == R.id.tomorrow_tasks) {
-            tomorrow = taskViewModel.getSpecificData(String.valueOf(Converter.dateToTimestamp(tomorrowAmDate)), String.valueOf(Converter.dateToTimestamp(theDayAfterTomorrowAmDate)));
-            tomorrow.observe(this, dataChangeObserver);
-        } else if (id == R.id.done_tasks) {
-            doneTask = taskViewModel.getDoneTasks("1");
-            doneTask.observe(this, dataChangeObserver);
-        }
     }
 
     @Override
@@ -337,21 +261,3 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
         }
     }
 }
-
-
-//interface MyObserver<T> {
-//    void onChanged(T t);
-//}
-//
-//class MyLiveData<T> {
-//    List<MyObserver<T>> observers = new ArrayList<>();
-//
-//    void observe(MyObserver<T> observer){
-//        observers.add(observer);
-//    }
-//    void add(T t){
-//        for(MyObserver<T> obs : observers){
-//            obs.onChanged(t);
-//        }
-//    }
-//}

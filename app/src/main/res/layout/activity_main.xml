@@ -14,7 +14,7 @@ tools:ignore="HardcodedText">
 
 
     <include
-        layout="@layout/navigation_bar_seperated"
+        layout="@layout/main_xml_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
