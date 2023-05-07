@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
 
-    BottomSheetFragment bottomSheetFragment;
+    private BottomSheetFragment bottomSheetFragment;
 
     private SharedViewModel sharedViewModel;
 
@@ -62,12 +62,13 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
     private Calendar calendarToConcvert;
     private Date todayAmDate, tomorrowAmDate, theDayAfterTomorrowAmDate;
 
-    //private String searchSTR;
-
-    public DrawerLayout drawerLayout;
-    public ActionBarDrawerToggle actionBarDrawerToggle;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
 
     private NavigationView navigationView;
+
+    private boolean buttonBackPressed = false;
+    Timer timer = new Timer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,8 +221,7 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
             doneTask.removeObservers(this);
         }
     }
-    public boolean buttonBackPressed = false;
-    Timer timer = new Timer();
+
 
     @Override
     public void onBackPressed() {

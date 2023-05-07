@@ -75,9 +75,6 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
         priorityRadioGroup = view.findViewById(R.id.radioGroup_priority);
 
 
-
-        //calendar.add(Calendar.DAY_OF_YEAR,-1);
-
         enterTodo.setText("");
 
         Chip todayChip = view.findViewById(R.id.today_chip);
@@ -108,8 +105,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
         if(isNew){
             enterTodo.setText("");
             dueDate = Calendar.getInstance().getTime();
-//            dueDate = Converter.fromTimestamp(1580589000000l);
-//            Log.i("TAG", "onResume: :"+dueDate);
+
             priority = Priority.NONE;
             sharedViewModel.setIsNew(false);
         }
@@ -119,11 +115,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
         super.onViewCreated(view, savedInstanceState);
 
         sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-//        if (sharedViewModel.getSelectedItem().getValue() != null){
-//            Task task = sharedViewModel.getSelectedItem().getValue();
-//
-//            enterTodo.setText(task.getTask());
-//        }
+
 
         calendarButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,11 +132,9 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
                 // i = year , i1 = month , i2 = day of month
 
                 dueDate = calendar.getTime();
-                Log.i("CalendarTAG", "onSelectedDayChange: "+String.valueOf(Converter.dateToTimestamp(dueDate)));
                 calendar.clear();
                 calendar.set(i,i1,i2);
                 dueDate = calendar.getTime();
-                Log.i("CalendarTAG", "onSelectedDayChange: "+String.valueOf(Converter.dateToTimestamp(dueDate)));
             }
         });
 
@@ -210,7 +200,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
                         notif = "Enter Text";
                     else if (dueDate == null)
                         notif = "Enter Date";
-                    Log.i("test snack", "onClick: testtt snack" + notif);
+
                     Toast.makeText(getContext() , notif ,Toast.LENGTH_SHORT).show();
                     Snackbar.make(saveButton, notif,Snackbar.LENGTH_SHORT).show();
                 }
@@ -224,8 +214,6 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
     public void onClick(View view) {
         int id = view.getId();
         if (id==R.id.today_chip){
-//            calendar.add(Calendar.DAY_OF_YEAR, 0);
-//            dueDate = calendar.getTime();
             calendar = Calendar.getInstance();
             dueDate = (calendar.getTime());
         }else if (id==R.id.tomorrow_chip){

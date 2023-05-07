@@ -103,18 +103,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             if (id == R.id.todo_row_layout){
                 onToDoClickListener.onTodoClick(currTask);
             }else if ( id == R.id.todo_radio_button){
-                //onToDoClickListener.onTodoRadioButtonClick(currTask);
 
                 currTask.setTask(currTask.getTask());
                 currTask.setDateCreated(currTask.getDateCreated());
                 currTask.setPriority(currTask.getPriority());
                 currTask.setDueDate(currTask.getDueDate());
-//                currTask.setDone(true);
+
                 if(currTask.isDone()) {
-//                    Log.i("TASKDONE= ", "TRUE");
                     currTask.setDone(false);
                 }else{
-//                    Log.i("TASKDONE= ", "FALSE");
                     currTask.setDone(true);
                 }
                 TaskViewModel.update(currTask);
