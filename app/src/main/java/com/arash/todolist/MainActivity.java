@@ -35,7 +35,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 import androidx.annotation.NonNull;
@@ -44,6 +45,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements OnToDoClickListener, View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
     private TaskViewModel taskViewModel;
@@ -218,12 +220,30 @@ public class MainActivity extends AppCompatActivity implements OnToDoClickListen
             doneTask.removeObservers(this);
         }
     }
+    public boolean buttonBackPressed = false;
+    Timer timer = new Timer();
 
     @Override
     public void onBackPressed() {
-        drawerLayout.closeDrawers();
-        super.onBackPressed();
+        if (drawerLayout.isOpen()) {
+            drawerLayout.closeDrawers();
+        }else {
+            if (buttonBackPressed) {
+                buttonBackPressed = false;
+                super.onBackPressed();
+            }else {
+                buttonBackPressed = true;
+                Toast.makeText( MainActivity.this ,"Press Back Button Again To Close The App"  ,  Toast.LENGTH_SHORT ) . show();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        buttonBackPressed = false;
+                    }
+                }, 3000);
+            }
+        }
     }
+
 
     @Override
     public void onClick(View view) {
